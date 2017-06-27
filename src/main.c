@@ -21,8 +21,20 @@ int main(int argc, char* argv[]) {
         printf("Failed to init winsock.\nERROR: %d", WSAGetLastError());
         return 1;
     }
+
+    if (LOBYTE(wsa.wVersion) != 2 || HIBYTE(wsa.wVersion) != 2) {
+        printf("This winsock dll does not support v2.2\n");
+        WSACleanup();
+        return 1;
+    }
     printf("Success\n");
 
+
+    /* SOCKET WSAAPI socket(int af, int type, int protocol)
+     * af (address family) - AF_INET or AF_INET6 (ipv4 or ipv6)
+     * type - SOCKET_STREAM (TCP) or SOCK_DGRAM (UDP)
+     * protocol - 0 service provider chooses the protocol
+     */
     printf("Creating socket... ");
     if((s = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
         printf("Failed to create socket.\nERROR: %d", WSAGetLastError());
@@ -30,6 +42,8 @@ int main(int argc, char* argv[]) {
     }
     printf("Success\n");
     
+    WSACleanup();
+
     return 0;
 }
 
